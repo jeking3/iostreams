@@ -5,6 +5,7 @@
 // See http://www.boost.org/libs/iostreams for documentation.
 
 #include <boost/config.hpp>
+#include <boost/predef/library.h>
 #include <boost/iostreams/categories.hpp>  // tags.
 #include <boost/iostreams/detail/ios.hpp>  // openmode, seekdir, int types.
 #include <boost/iostreams/detail/error.hpp>
@@ -37,7 +38,8 @@ using boost::unit_test::test_suite;
  * In each case all of the status checking functions of a stream are checked.
  *
  * MSVCPRT (Visual Studio 2017, at least) does not perform exception
- * handling in the seek methods (confirmed by inspecting sources).
+ * handling in the seek methods (confirmed by inspecting sources), nor does
+ * Dinkumware in general it would seem.
  *
  * CYGWIN (with gcc-7.3.0) does not behave properly on the throw_delayed cases.
  */
@@ -164,7 +166,7 @@ test_suite* init_unit_test_suite(int, char* [])
     test->add(BOOST_TEST_CASE(&wrap_throw_delayed<&test_write>::execute));
 #endif
     
-#ifndef BOOST_MSVC
+#if !defined(BOOST_MSVC) && !defined(BOOST_LIB_STD_DINKUMWARE)
     test->add(BOOST_TEST_CASE(&wrap_nothrow      <&test_seekg>::execute));
     test->add(BOOST_TEST_CASE(&wrap_throw        <&test_seekg>::execute));
 #ifndef __CYGWIN__
